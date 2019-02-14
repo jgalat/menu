@@ -20,7 +20,6 @@ function NewOrder(props) {
 		return null;
 	}
 
-	const [openSnack, setOpenSnack] = useState(false);
 	const [orderLink, setOrderLink] = useState('');
 	const [form, setForm] = useState({
 		dayMenu: '',
@@ -78,25 +77,48 @@ function NewOrder(props) {
 				to="/">
 				Go back
 			</Button>
-			<Snackbar
-				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-				className={classes.snackbar}
-				ContentProps={{
-					'aria-describedby': 'message-id',
-				}}
-				message={
-					<Typography color="inherit">
-						Share this link: <em>{`${window.location.origin}/${orderLink}`}</em>
-					</Typography>
-				}
-				open={openSnack}
-				action={
-					<Button color="secondary" size="small" onClick={() => props.history.replace(orderLink)}>
-						Redirect me
-					</Button>
-				} />
+			{ orderLink &&
+			  <Snackbar
+					anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+					className={classes.snackbar}
+					ContentProps={{
+						'aria-describedby': 'message-id',
+					}}
+					message={
+						<Typography color="inherit">
+							Share this link: <em>{`${window.location.origin}/${orderLink}`}</em>
+						</Typography>
+					}
+					open={orderLink}
+					action={
+						<React.Fragment>
+							<Button color="secondary" size="small" onClick={copyUrl}>
+								Copy
+							</Button>
+							<Button color="secondary" size="small" onClick={() => props.history.replace(orderLink)}>
+								Redirect me
+							</Button>
+						</React.Fragment>
+					}/>
+			}
 		</React.Fragment>
 	);
+
+	function copyUrl(e) {
+		e.preventDefault();
+
+		const textArea = document.createElement('textarea');
+		textArea.value = `${window.location.origin}/${orderLink}`;
+		document.body.prepend(textArea);
+		textArea.focus();
+		textArea.select();
+
+		try {
+			document.execCommand('copy');
+		} catch (err) { }
+
+		document.body.removeChild(textArea);
+	}
 
 	async function submit(e) {
 		e.preventDefault();
@@ -109,7 +131,6 @@ function NewOrder(props) {
 		}
 
 		setOrderLink(uid);
-		setOpenSnack(true);
 	}
 }
 
