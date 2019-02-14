@@ -39,7 +39,11 @@ class Firebase {
     }
 
     const uid = uniqid();
-    await this.db.collection('menu').doc(uid).set({ menu });
+    const requests = {};
+    await this.db.collection('menu').doc(uid).set({
+      menu,
+      requests,
+    });
 
     return uid;
   }
