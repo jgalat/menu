@@ -9,11 +9,11 @@ import {
   TableHead,
   TableBody } from '@material-ui/core'
 import Fastfood from '@material-ui/icons/Fastfood';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import firebase from '../firebase';
 import style from '../theme';
-import { redirectOnUnauthorized } from '../util';
+import withAuthentication from '../withAuthentication';
 import { DISHES, DRINKS, DESSERTS, BE_GREEN_PHONE } from '../constants';
 
 function FoodTable(props) {
@@ -51,14 +51,7 @@ function OrderOverview(props) {
   const { classes, match } = props;
   const menuId = match.params.menuId;
 
-  const redirect = redirectOnUnauthorized(props.location.pathname);
-  if (redirect) {
-    props.history.replace(redirect);
-    return null;
-  }
-
   const [store, setStore] = useState(false);
-
   useEffect(() => {
     firebase.getStore(menuId, setStore);
     return firebase.subscribeToSnapshot(menuId, setStore);
@@ -181,4 +174,4 @@ function OrderOverview(props) {
   }
 }
 
-export default withRouter(withStyles(style)(OrderOverview));
+export default withAuthentication(withStyles(style)(OrderOverview));

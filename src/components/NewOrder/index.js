@@ -6,20 +6,14 @@ import { Typography,
   InputLabel,
    Snackbar } from '@material-ui/core';
 import Fastfood from '@material-ui/icons/Fastfood';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import firebase from '../firebase';
 import style from '../theme';
-import { redirectOnUnauthorized } from '../util';
+import withAuthentication from '../withAuthentication';
 
 function NewOrder(props) {
   const { classes } = props;
-
-  const redirect = redirectOnUnauthorized(props.location.pathname);
-  if (redirect) {
-    props.history.replace(redirect);
-    return null;
-  }
 
   const [orderLink, setOrderLink] = useState('');
   const [form, setForm] = useState({
@@ -135,4 +129,4 @@ function NewOrder(props) {
   }
 }
 
-export default withRouter(withStyles(style)(NewOrder));
+export default withAuthentication(withStyles(style)(NewOrder));

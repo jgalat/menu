@@ -31,7 +31,6 @@ function HomePage(props) {
           Please login first
         </Typography>
       }
-
       { user &&
         <Button
           type="button"
