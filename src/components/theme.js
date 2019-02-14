@@ -17,6 +17,9 @@ export default theme => ({
     alignItems: 'center',
     padding: `${theme.spacing.unit * 3}px`,
   },
+  footerText: {
+    verticalAlign: 'middle',
+  },
   footer: {
     marginBottom: theme.spacing.unit * 4,
     display: 'flex',

@@ -17,7 +17,9 @@ function PaperLayout(props) {
 			<footer className={classes.footer}>
 				<Typography variant="body1">
 					<Link href={'https://github.com/jgalat/menu'} className={classes.link}>
-						<Code fontSize="inherit" /> Source code
+						<Code className={classes.footerText} fontSize="inherit" />
+						{' '}
+						<span className={classes.footerText}>Source code</span>
 					</Link>
 				</Typography>
 			</footer>
