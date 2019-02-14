@@ -13,6 +13,7 @@ import { Link, withRouter } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import firebase from '../firebase';
 import style from '../theme';
+import { redirectOnUnauthorized } from '../util';
 import { DISHES, DRINKS, DESSERTS, BE_GREEN_PHONE } from '../constants';
 
 function FoodTable(props) {
@@ -20,7 +21,7 @@ function FoodTable(props) {
 
   return (
     <React.Fragment>
-      <Typography component="h1" variant="h6">
+      <Typography variant="h6">
         {title}
       </Typography>
       <Table className={classes.foodTable}>
@@ -49,11 +50,10 @@ function FoodTable(props) {
 function OrderOverview(props) {
   const { classes, match } = props;
   const menuId = match.params.menuId;
-  const user = firebase.getCurrentUser();
 
-  if (!user) {
-    // not logged in
-    props.history.replace('/');
+  const redirect = redirectOnUnauthorized(props.location.pathname);
+  if (redirect) {
+    props.history.replace(redirect);
     return null;
   }
 
@@ -61,7 +61,7 @@ function OrderOverview(props) {
 
   useEffect(() => {
     firebase.getStore(menuId, setStore);
-    firebase.subscribeToSnapshot(menuId, setStore);
+    return firebase.subscribeToSnapshot(menuId, setStore);
   }, []);
 
   const dishesNames = store && store.menu ? DISHES(store.menu) : {};
@@ -118,12 +118,12 @@ function OrderOverview(props) {
   return (
     <React.Fragment>
       <Fastfood />
-      <Typography className={classes.typography} component="h1" variant="h4">
+      <Typography className={classes.typography} variant="h4">
         Order overview
       </Typography>
       { store ? (
         <React.Fragment>
-          <Typography className={classes.typography} component="h1" variant="h6">
+          <Typography className={classes.typography} variant="h5">
             Total requests: {Object.keys(requests).length}
           </Typography>
           <FoodTable title='Food' data={dishRows} {...props} />

@@ -1,23 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, Button } from '@material-ui/core';
 import Fastfood from '@material-ui/icons/Fastfood';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Link } from 'react-router-dom';
+import { parse } from 'query-string';
 import style from '../theme';
 import firebase from '../firebase';
 
 function HomePage(props) {
   const { classes } = props;
-  const user = firebase.getCurrentUser();
+
+  const [user, setUser] = useState(firebase.getCurrentUser());
+  const redirectTo = parse(props.location.search).redirect;
+  useEffect(() => {
+    if (redirectTo && user) {
+      props.history.replace(redirectTo);
+    }
+  }, [user]);
 
   return (
     <React.Fragment>
-      <Typography className={classes.typography} component="h1" variant="h3">
+      <Typography className={classes.typography} variant="h2">
         <Fastfood fontSize="inherit" color="secondary" />
       </Typography>
-      <Typography className={classes.typography} component="h1" variant="h6">
+      <Typography className={classes.typography} variant="h5">
         Welcome { user ? user.displayName : 'guest' }
       </Typography>
+      { redirectTo &&
+        <Typography color="error" variant="body1">
+          Please login first
+        </Typography>
+      }
+
       { user &&
         <Button
           type="button"
@@ -43,13 +57,13 @@ function HomePage(props) {
   );
 
   async function login() {
-    await firebase.login();
-    props.history.push('/');
+    const result = await firebase.login();
+    setUser(result.user);
   }
 
   async function logout() {
     await firebase.logout();
-    props.history.push('/');
+    setUser(null);
   }
 }
 

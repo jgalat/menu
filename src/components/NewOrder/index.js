@@ -10,13 +10,14 @@ import { Link, withRouter } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import firebase from '../firebase';
 import style from '../theme';
+import { redirectOnUnauthorized } from '../util';
 
 function NewOrder(props) {
   const { classes } = props;
 
-  if (!firebase.getCurrentUser()) {
-    // not logged in
-    props.history.replace('/');
+  const redirect = redirectOnUnauthorized(props.location.pathname);
+  if (redirect) {
+    props.history.replace(redirect);
     return null;
   }
 
@@ -38,7 +39,7 @@ function NewOrder(props) {
   return (
     <React.Fragment>
       <Fastfood />
-      <Typography className={classes.typography} component="h1" variant="h4">
+      <Typography className={classes.typography} variant="h4">
         Create a new order
       </Typography>
       <form className={classes.form} onSubmit={submit}>
@@ -89,7 +90,7 @@ function NewOrder(props) {
               Share this link: <em>{`${window.location.origin}/${orderLink}`}</em>
             </Typography>
           }
-          open={orderLink}
+          open={orderLink ? true : false}
           action={
             <React.Fragment>
               <Button color="secondary" size="small" onClick={copyUrl}>

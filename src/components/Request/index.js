@@ -12,16 +12,17 @@ import { Link, withRouter } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import firebase from '../firebase';
 import style from '../theme';
+import { redirectOnUnauthorized } from '../util';
 import { DISHES, DRINKS, DESSERTS } from '../constants';
 
-function Order(props) {
+function Request(props) {
   const { classes, match } = props;
   const menuId = match.params.menuId;
   const user = firebase.getCurrentUser();
 
-  if (!user) {
-    // not logged in
-    props.history.replace('/');
+  const redirect = redirectOnUnauthorized(props.location.pathname);
+  if (redirect) {
+    props.history.replace(redirect);
     return null;
   }
 
@@ -63,7 +64,7 @@ function Order(props) {
   return (
     <React.Fragment>
       <Fastfood />
-      <Typography className={classes.typography} component="h1" variant="h4">
+      <Typography className={classes.typography} variant="h4">
         Submit request
       </Typography>
       { store ? (
@@ -171,4 +172,4 @@ function Order(props) {
   }
 }
 
-export default withRouter(withStyles(style)(Order));
+export default withRouter(withStyles(style)(Request));
