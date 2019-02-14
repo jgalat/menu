@@ -1,10 +1,10 @@
-import React from 'react'
-import { Typography, Button } from '@material-ui/core'
-import Fastfood from '@material-ui/icons/Fastfood'
-import withStyles from '@material-ui/core/styles/withStyles'
-import { Link } from 'react-router-dom'
-import style from '../theme'
-import firebase from '../firebase'
+import React from 'react';
+import { Typography, Button } from '@material-ui/core';
+import Fastfood from '@material-ui/icons/Fastfood';
+import withStyles from '@material-ui/core/styles/withStyles';
+import { Link } from 'react-router-dom';
+import style from '../theme';
+import firebase from '../firebase';
 
 function HomePage(props) {
   const { classes } = props;
@@ -43,13 +43,13 @@ function HomePage(props) {
   );
 
   async function login() {
-    await firebase.login()
-    props.history.push('/')
+    await firebase.login();
+    props.history.push('/');
   }
 
   async function logout() {
-    await firebase.logout()
-    props.history.push('/')
+    await firebase.logout();
+    props.history.push('/');
   }
 }
 
