@@ -7,7 +7,7 @@ import Request from '../Request';
 import OrderOverview from '../OrderOverview';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { CssBaseline, CircularProgress } from '@material-ui/core';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import firebase from '../firebase';
 
 const theme = createMuiTheme({
@@ -33,7 +33,7 @@ function App(props) {
             <Route exact path="/new" component={NewOrder} />
             <Route exact path="/:menuId" component={Request} />
             <Route exact path="/:menuId/overview" component={OrderOverview} />
-            <Route render={() => (window.location = '/') && false} />
+            <Route component={() => <Redirect to="/" />} />
           </Switch>
         </Router>
       </PaperLayout>
