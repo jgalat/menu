@@ -56,8 +56,8 @@ function HomePage(props) {
   );
 
   async function login() {
-    const result = await firebase.login();
-    setUser(result.user);
+    const user = await firebase.login();
+    setUser(user);
   }
 
   async function logout() {

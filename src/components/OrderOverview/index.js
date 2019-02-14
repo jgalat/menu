@@ -1,20 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Typography,
   Button,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   Table,
   TableCell,
-  TableRow,
+  TableBody,
   TableHead,
-  TableBody } from '@material-ui/core'
-import Fastfood from '@material-ui/icons/Fastfood';
+  TableRow,
+  Typography } from '@material-ui/core'
+import { Fastfood, CheckCircle, Error } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import firebase from '../firebase';
 import style from '../theme';
 import withAuthentication from '../withAuthentication';
 import { DISHES, DRINKS, DESSERTS, BE_GREEN_PHONE } from '../constants';
+
+function DialogRequests(props) {
+  const { requestsUsers, users, ...rest } = props;
+  return (
+    <Dialog aria-labelledby="dialog-title" {...rest}>
+      <DialogTitle id="dialog-title">Total requests</DialogTitle>
+      <List>
+        { users.map((user, i) => (
+            <ListItem key={i}>
+              <ListItemIcon>
+                { requestsUsers.indexOf(user.userId) < 0 ?
+                  <Error fontSize="large" />
+                  : <CheckCircle fontSize="large" color="primary" /> }
+              </ListItemIcon>
+              <ListItemText primary={user.displayName} />
+            </ListItem>
+          ))
+        }
+      </List>
+    </Dialog>
+  );
+}
 
 function FoodTable(props) {
   const { classes, title, data } = props;
@@ -51,18 +79,22 @@ function OrderOverview(props) {
   const { classes, match } = props;
   const menuId = match.params.menuId;
 
-  const [store, setStore] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [store, setStore] = useState(null);
+  const [users, setUsers] = useState(null);
   useEffect(() => {
     firebase.getStore(menuId, setStore);
+    firebase.retrieveAllUsers(setUsers);
     return firebase.subscribeToSnapshot(menuId, setStore);
   }, []);
 
   const dishesNames = store && store.menu ? DISHES(store.menu) : {};
   const requests = store && store.requests ? store.requests : {};
   Object.keys(requests).forEach(key => {
-    requests[key].dish = requests[key].clarification ?
-      `${requests[key].dish} (${requests[key].clarification})` :
-      requests[key].dish;
+    if (requests[key].clarification) {
+      requests[key].dish = `${requests[key].dish} (${requests[key].clarification})`;
+      delete requests[key].clarification;
+    }
   });
 
   function collect(key) {
@@ -116,9 +148,22 @@ function OrderOverview(props) {
       </Typography>
       { store ? (
         <React.Fragment>
-          <Typography className={classes.typography} variant="h5">
+          <Button
+            className={classes.typography}
+            variant="outlined"
+            color="secondary"
+            onClick={() => setOpenDialog(true)}>
             Total requests: {Object.keys(requests).length}
-          </Typography>
+          </Button>
+          { users &&
+            store.requests &&
+            <DialogRequests
+              className={classes.dialog}
+              open={openDialog}
+              onClose={() => setOpenDialog(false)}
+              users={users}
+              requestsUsers={Object.keys(store.requests)} />
+          }
           <FoodTable title='Food' data={dishRows} {...props} />
           <FoodTable title='Drink' data={drinkRows} {...props} />
           <FoodTable title='Dessert' data={dessertRows} {...props} />

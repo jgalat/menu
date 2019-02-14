@@ -4,6 +4,9 @@ import 'firebase/firebase-firestore';
 import uniqid from 'uniqid';
 import assert from 'assert';
 
+const MENU_COLLECTION = 'menu';
+const USER_COLLECTION = 'user';
+
 const config = process.env.REACT_APP_FIREBASE_CONFIG;
 
 class Firebase {
@@ -26,11 +29,22 @@ class Firebase {
   }
 
   async login() {
-    return await this.auth.signInWithPopup(this.provider);
+    const { user } = await this.auth.signInWithPopup(this.provider);
+    await this.db.collection(USER_COLLECTION).doc(user.uid).set({
+      userId: user.uid,
+      displayName: user.displayName,
+    }, { merge: true });
+    return user;
   }
 
   logout() {
     return this.auth.signOut();
+  }
+
+  retrieveAllUsers(callback) {
+    this.db.collection(USER_COLLECTION).get().then(result => {
+      callback(result.docs.map(doc => doc.data()));
+    });
   }
 
   async createNewOrder(menu) {
@@ -40,7 +54,7 @@ class Firebase {
 
     const uid = uniqid();
     const requests = {};
-    await this.db.collection('menu').doc(uid).set({
+    await this.db.collection(MENU_COLLECTION).doc(uid).set({
       menu,
       requests,
     });
@@ -48,27 +62,27 @@ class Firebase {
     return uid;
   }
 
-  getStore(uid, callback) {
-    this.db.collection('menu').doc(uid).get().then(result => {
+  getStore(menuId, callback) {
+    this.db.collection(MENU_COLLECTION).doc(menuId).get().then(result => {
         callback(result.data());
     });
   }
 
-  subscribeToSnapshot(uid, callback) {
+  subscribeToSnapshot(menuId, callback) {
     /* it returns the unsubscribe function */
-    return this.db.collection('menu').doc(uid).onSnapshot(snapshot => {
+    return this.db.collection(MENU_COLLECTION).doc(menuId).onSnapshot(snapshot => {
       callback(snapshot.data());
     });
   }
 
-  submitRequest(uid, request) {
+  submitRequest(menuId, request) {
     if (!this.getCurrentUser()) {
       return null;
     }
 
     const userId = this.getCurrentUser().uid;
 
-    return this.db.collection('menu').doc(uid).set({
+    return this.db.collection(MENU_COLLECTION).doc(menuId).set({
       requests: {
         [userId]: request,
       },
