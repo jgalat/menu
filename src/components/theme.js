@@ -1,3 +1,5 @@
+import { green } from '@material-ui/core/colors';
+
 export default theme => ({
   main: {
     width: 'auto',
@@ -34,6 +36,12 @@ export default theme => ({
   },
   typography: {
     marginBottom: theme.spacing.unit * 2,
+  },
+  dialogTitle: {
+    textAlign: 'center',
+  },
+  okCheck: {
+    color: green[400], 
   },
   foodTable: {
     marginBottom: theme.spacing.unit * 3,

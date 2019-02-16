@@ -4,6 +4,7 @@ import {
   CircularProgress,
   Dialog,
   DialogTitle,
+  DialogContent,
   List,
   ListItem,
   ListItemIcon,
@@ -23,23 +24,26 @@ import withAuthentication from '../withAuthentication';
 import { DISHES, DRINKS, DESSERTS, BE_GREEN_PHONE } from '../constants';
 
 function DialogRequests(props) {
-  const { requestsUsers, users, ...rest } = props;
+  const { requestsUsers, users, classes, ...rest } = props;
   return (
-    <Dialog aria-labelledby="dialog-title" {...rest}>
-      <DialogTitle id="dialog-title">Total requests</DialogTitle>
-      <List>
-        { users.map((user, i) => (
-            <ListItem key={i}>
-              <ListItemIcon>
-                { requestsUsers.indexOf(user.userId) < 0 ?
-                  <Error fontSize="large" />
-                  : <CheckCircle fontSize="large" color="primary" /> }
-              </ListItemIcon>
-              <ListItemText primary={user.displayName} />
-            </ListItem>
-          ))
-        }
-      </List>
+    <Dialog aria-labelledby="dialog-title" scroll="paper" {...rest}>
+      <DialogTitle className={classes.dialogTitle} id="dialog-title">Total requests</DialogTitle>
+      <DialogContent>
+        <List>
+          { users.map((user, i) => (
+              <ListItem key={i}>
+                <ListItemIcon>
+                  { requestsUsers.indexOf(user.userId) < 0 ?
+                    <Error fontSize="large" />
+                    : <CheckCircle className={classes.okCheck} fontSize="large" color="primary" /> 
+                  }
+                </ListItemIcon>
+                <ListItemText primary={user.displayName} />
+              </ListItem>
+            ))
+          }
+        </List>
+      </DialogContent>
     </Dialog>
   );
 }
@@ -162,11 +166,12 @@ function OrderOverview(props) {
               open={openDialog}
               onClose={() => setOpenDialog(false)}
               users={users}
+              classes={classes}
               requestsUsers={Object.keys(store.requests)} />
           }
-          <FoodTable title='Food' data={dishRows} {...props} />
-          <FoodTable title='Drink' data={drinkRows} {...props} />
-          <FoodTable title='Dessert' data={dessertRows} {...props} />
+          <FoodTable title='Food' data={dishRows} classes={classes} />
+          <FoodTable title='Drink' data={drinkRows} classes={classes} />
+          <FoodTable title='Dessert' data={dessertRows} classes={classes} />
           <Button
             type="button"
             fullWidth
