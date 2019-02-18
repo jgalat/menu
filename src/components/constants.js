@@ -9,7 +9,7 @@ const _DISHES = {
   MILANGA_PURE: 'Milanga con puré',
   MILANGA_ENSALADA: 'Milanga con ensalada',
   ENSALDA_BG: 'Ensalada Be Green',
-  ENSALADA_GB_NO_POLLO: 'Ensalada Be Green sin pollo',
+  ENSALADA_BG_NO_POLLO: 'Ensalada Be Green sin pollo',
 };
 
 export function DISHES(menu) {

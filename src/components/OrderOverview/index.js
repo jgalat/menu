@@ -14,6 +14,7 @@ import {
   TableBody,
   TableHead,
   TableRow,
+  Tooltip,
   Typography } from '@material-ui/core'
 import { Fastfood, CheckCircle, Error } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
@@ -27,18 +28,19 @@ function DialogRequests(props) {
   const { requestsUsers, users, classes, ...rest } = props;
   return (
     <Dialog aria-labelledby="dialog-title" scroll="paper" {...rest}>
-      <DialogTitle className={classes.dialogTitle} id="dialog-title">Total requests</DialogTitle>
+      <DialogTitle className={classes.dialogTitle} id="dialog-title">Requests</DialogTitle>
       <DialogContent>
         <List>
-          { users.map((user, i) => (
+          { Object.keys(users).map((userId, i) => (
+              users[userId] &&
               <ListItem key={i}>
                 <ListItemIcon>
-                  { requestsUsers.indexOf(user.userId) < 0 ?
+                  { requestsUsers.indexOf(userId) < 0 ?
                     <Error fontSize="large" />
-                    : <CheckCircle className={classes.okCheck} fontSize="large" color="primary" /> 
+                    : <CheckCircle className={classes.okCheck} fontSize="large" color="primary" />
                   }
                 </ListItemIcon>
-                <ListItemText primary={user.displayName} />
+                <ListItemText primary={users[userId].displayName} />
               </ListItem>
             ))
           }
@@ -49,8 +51,7 @@ function DialogRequests(props) {
 }
 
 function FoodTable(props) {
-  const { classes, title, data } = props;
-
+  const { classes, title, data, users } = props;
   return (
     <React.Fragment>
       <Typography variant="h6">
@@ -65,13 +66,32 @@ function FoodTable(props) {
         </TableHead>
         <TableBody>
           { Object.keys(data).map((key, i) => (
-            <TableRow key={i}>
-              <TableCell component="th" scope="row">
-                {data[key].name}
-              </TableCell>
-              <TableCell align="right">{data[key].total}</TableCell>
-            </TableRow>
-          ))
+              <Tooltip
+                key={i}
+                title={
+                  <List>
+                    { data[key].by.map((uid, i) =>
+                        users[uid] &&
+                        <ListItem key={i}>
+                          {users[uid].displayName}
+                        </ListItem>
+                      )
+                    }
+                  </List>
+                }
+                placement="right">
+                <TableRow hover={true}>
+                  <TableCell component="th" scope="row">
+                    {data[key].name}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography variant="inherit">
+                      {data[key].total}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </Tooltip>
+            ))
           }
         </TableBody>
       </Table>
@@ -87,7 +107,6 @@ function OrderOverview(props) {
   const [store, setStore] = useState(null);
   const [users, setUsers] = useState(null);
   useEffect(() => {
-    firebase.getStore(menuId, setStore);
     firebase.retrieveAllUsers(setUsers);
     return firebase.subscribeToSnapshot(menuId, setStore);
   }, []);
@@ -103,16 +122,21 @@ function OrderOverview(props) {
 
   function collect(key) {
     return Object.keys(requests).map(uid => {
-      return requests[uid][key];
+      return {
+        value: requests[uid][key],
+        by: uid,
+      };
     });
   }
 
   function countEach(list) {
     const group = {};
-    list.forEach(key => {
-      if (!group[key])
-        group[key] = 0;
-      group[key] += 1;
+    list.forEach(({ value, by }) => {
+      if (!group[value]) {
+        group[value] = { count: 0, by: [] };
+      }
+      group[value].count += 1;
+      group[value].by.push(by);
     });
     return group;
   }
@@ -127,16 +151,17 @@ function OrderOverview(props) {
       }
       return {
         name: name,
-        total: obj[key],
+        total: obj[key].count,
+        by: obj[key].by,
       };
     });
   }
 
-  const [dishCounts, drinkCounts, dessertCounts] = requests ? [
+  const [dishCounts, drinkCounts, dessertCounts] = [
     collect('dish'),
     collect('drink'),
     collect('dessert'),
-  ].map(countEach) : [{}, {}, {}];
+  ].map(countEach);
 
   const [dishRows, drinkRows, dessertRows] = [
     getRow(dishCounts, dishesNames),
@@ -150,7 +175,7 @@ function OrderOverview(props) {
       <Typography className={classes.typography} variant="h4">
         Order overview
       </Typography>
-      { store ? (
+      { store && users ? (
         <React.Fragment>
           <Button
             className={classes.typography}
@@ -159,19 +184,18 @@ function OrderOverview(props) {
             onClick={() => setOpenDialog(true)}>
             Total requests: {Object.keys(requests).length}
           </Button>
-          { users &&
-            store.requests &&
+          { requests &&
             <DialogRequests
               className={classes.dialog}
+              classes={classes}
               open={openDialog}
               onClose={() => setOpenDialog(false)}
               users={users}
-              classes={classes}
-              requestsUsers={Object.keys(store.requests)} />
+              requestsUsers={Object.keys(requests)} />
           }
-          <FoodTable title='Food' data={dishRows} classes={classes} />
-          <FoodTable title='Drink' data={drinkRows} classes={classes} />
-          <FoodTable title='Dessert' data={dessertRows} classes={classes} />
+          <FoodTable title='Food' data={dishRows} users={users} classes={classes} />
+          <FoodTable title='Drink' data={drinkRows} users={users} classes={classes} />
+          <FoodTable title='Dessert' data={dessertRows} users={users} classes={classes} />
           <Button
             type="button"
             fullWidth

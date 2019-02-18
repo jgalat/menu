@@ -30,11 +30,22 @@ class Firebase {
 
   async login() {
     const { user } = await this.auth.signInWithPopup(this.provider);
+
+    if (!user) {
+      return { error: 'There was an error in the login proccess.' };
+    }
+
+    if (user && user.email.indexOf('@bonzzu.com') < 0) {
+      await this.logout();
+      return { error: 'Please login with your @bonzzu account.' };
+    }
+
     await this.db.collection(USER_COLLECTION).doc(user.uid).set({
       userId: user.uid,
       displayName: user.displayName,
     }, { merge: true });
-    return user;
+
+    return { user };
   }
 
   logout() {
@@ -43,7 +54,10 @@ class Firebase {
 
   retrieveAllUsers(callback) {
     this.db.collection(USER_COLLECTION).get().then(result => {
-      callback(result.docs.map(doc => doc.data()));
+      const docs = result.docs.map(doc => doc.data());
+      const users = {}
+      docs.forEach(user => users[user.userId] = user);
+      callback(users);
     });
   }
 

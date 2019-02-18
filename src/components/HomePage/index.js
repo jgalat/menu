@@ -11,12 +11,17 @@ function HomePage(props) {
   const { classes } = props;
 
   const [user, setUser] = useState(firebase.getCurrentUser());
+  const [errorMessage, setErrorMessage] = useState('');
   const redirectTo = parse(props.location.search).redirect;
   useEffect(() => {
-    if (redirectTo && user) {
+    if (user && redirectTo) {
       props.history.replace(redirectTo);
     }
-  }, [user]);
+
+    if (!user && redirectTo) {
+      setErrorMessage('Please login first.');
+    }
+  }, [user, errorMessage]);
 
   return (
     <React.Fragment>
@@ -26,9 +31,9 @@ function HomePage(props) {
       <Typography className={classes.typography} variant="h5">
         Welcome { user ? user.displayName : 'guest' }
       </Typography>
-      { redirectTo &&
+      { errorMessage &&
         <Typography color="error" variant="body1">
-          Please login first
+          {errorMessage}
         </Typography>
       }
       { user &&
@@ -56,8 +61,12 @@ function HomePage(props) {
   );
 
   async function login() {
-    const user = await firebase.login();
-    setUser(user);
+    const { error, user } = await firebase.login();
+    if (error) {
+      setErrorMessage(error);
+    } else {
+      setUser(user);
+    }
   }
 
   async function logout() {

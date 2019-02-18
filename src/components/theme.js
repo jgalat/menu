@@ -41,7 +41,7 @@ export default theme => ({
     textAlign: 'center',
   },
   okCheck: {
-    color: green[400], 
+    color: green[400],
   },
   foodTable: {
     marginBottom: theme.spacing.unit * 3,
