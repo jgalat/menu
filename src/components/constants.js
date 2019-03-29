@@ -10,6 +10,7 @@ const _DISHES = {
   MILANGA_ENSALADA: 'Milanga con ensalada',
   ENSALDA_BG: 'Ensalada Be Green',
   ENSALADA_BG_NO_POLLO: 'Ensalada Be Green sin pollo',
+  PECHUGA_GRILLADA: 'Pechuga grillada',
 };
 
 export function DISHES(menu) {
