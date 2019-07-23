@@ -5,7 +5,9 @@ import firebase from './firebase';
 function withAuthentication(WrappedComponent) {
   return function(props) {
     if (!firebase.getCurrentUser()) {
-      return <Redirect to={`/?redirect=${encodeURI(props.location.pathname)}`} />;
+      return (
+        <Redirect to={`/?redirect=${encodeURI(props.location.pathname)}`} />
+      );
     }
 
     return <WrappedComponent {...props} />;

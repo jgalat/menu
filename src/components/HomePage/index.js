@@ -21,7 +21,7 @@ function HomePage(props) {
     if (!user && redirectTo) {
       setErrorMessage('Please login first.');
     }
-  }, [user, errorMessage]);
+  }, [user, errorMessage, redirectTo]);
 
   return (
     <React.Fragment>
@@ -29,14 +29,14 @@ function HomePage(props) {
         <Fastfood fontSize="inherit" color="secondary" />
       </Typography>
       <Typography className={classes.typography} variant="h5">
-        Welcome { user ? user.displayName : 'guest' }
+        Welcome {user ? user.displayName : 'guest'}
       </Typography>
-      { errorMessage &&
+      {errorMessage && (
         <Typography color="error" variant="body1">
           {errorMessage}
         </Typography>
-      }
-      { user &&
+      )}
+      {user && (
         <Button
           type="button"
           fullWidth
@@ -47,7 +47,7 @@ function HomePage(props) {
           className={classes.submit}>
           New order
         </Button>
-      }
+      )}
       <Button
         type="button"
         fullWidth
@@ -55,7 +55,7 @@ function HomePage(props) {
         color="secondary"
         onClick={user ? logout : login}
         className={classes.submit}>
-        { user ? "Logout" : "Login with Google" }
+        {user ? 'Logout' : 'Login with Google'}
       </Button>
     </React.Fragment>
   );

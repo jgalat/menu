@@ -15,7 +15,8 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography } from '@material-ui/core'
+  Typography,
+} from '@material-ui/core';
 import { Fastfood, CheckCircle, Error } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -28,22 +29,30 @@ function DialogRequests(props) {
   const { requestsUsers, users, classes, ...rest } = props;
   return (
     <Dialog aria-labelledby="dialog-title" scroll="paper" {...rest}>
-      <DialogTitle className={classes.dialogTitle} id="dialog-title">Requests</DialogTitle>
+      <DialogTitle className={classes.dialogTitle} id="dialog-title">
+        Requests
+      </DialogTitle>
       <DialogContent>
         <List>
-          { Object.keys(users).map((userId, i) => (
-              users[userId] &&
-              <ListItem key={i}>
-                <ListItemIcon>
-                  { requestsUsers.indexOf(userId) < 0 ?
-                    <Error fontSize="large" />
-                    : <CheckCircle className={classes.okCheck} fontSize="large" color="primary" />
-                  }
-                </ListItemIcon>
-                <ListItemText primary={users[userId].displayName} />
-              </ListItem>
-            ))
-          }
+          {Object.keys(users).map(
+            (userId, i) =>
+              users[userId] && (
+                <ListItem key={i}>
+                  <ListItemIcon>
+                    {requestsUsers.indexOf(userId) < 0 ? (
+                      <Error fontSize="large" />
+                    ) : (
+                      <CheckCircle
+                        className={classes.okCheck}
+                        fontSize="large"
+                        color="primary"
+                      />
+                    )}
+                  </ListItemIcon>
+                  <ListItemText primary={users[userId].displayName} />
+                </ListItem>
+              )
+          )}
         </List>
       </DialogContent>
     </Dialog>
@@ -54,9 +63,7 @@ function FoodTable(props) {
   const { classes, title, data, users } = props;
   return (
     <React.Fragment>
-      <Typography variant="h6">
-        {title}
-      </Typography>
+      <Typography variant="h6">{title}</Typography>
       <Table className={classes.foodTable}>
         <TableHead>
           <TableRow>
@@ -65,34 +72,30 @@ function FoodTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          { Object.keys(data).map((key, i) => (
-              <Tooltip
-                key={i}
-                title={
-                  <List>
-                    { data[key].by.map((uid, i) =>
-                        users[uid] &&
-                        <ListItem key={i}>
-                          {users[uid].displayName}
-                        </ListItem>
+          {Object.keys(data).map((key, i) => (
+            <Tooltip
+              key={i}
+              title={
+                <List>
+                  {data[key].by.map(
+                    (uid, i) =>
+                      users[uid] && (
+                        <ListItem key={i}>{users[uid].displayName}</ListItem>
                       )
-                    }
-                  </List>
-                }
-                placement="right">
-                <TableRow hover={true}>
-                  <TableCell component="th" scope="row">
-                    {data[key].name}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography variant="inherit">
-                      {data[key].total}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              </Tooltip>
-            ))
-          }
+                  )}
+                </List>
+              }
+              placement="right">
+              <TableRow hover={true}>
+                <TableCell component="th" scope="row">
+                  {data[key].name}
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="inherit">{data[key].total}</Typography>
+                </TableCell>
+              </TableRow>
+            </Tooltip>
+          ))}
         </TableBody>
       </Table>
     </React.Fragment>
@@ -109,13 +112,15 @@ function OrderOverview(props) {
   useEffect(() => {
     firebase.retrieveAllUsers(setUsers);
     return firebase.subscribeToSnapshot(menuId, setStore);
-  }, []);
+  }, [menuId]);
 
   const dishesNames = store && store.menu ? DISHES(store.menu) : {};
   const requests = store && store.requests ? store.requests : {};
   Object.keys(requests).forEach(key => {
     if (requests[key].clarification) {
-      requests[key].dish = `${requests[key].dish} (${requests[key].clarification})`;
+      requests[
+        key
+      ].dish = `${requests[key].dish} (${requests[key].clarification})`;
       delete requests[key].clarification;
     }
   });
@@ -175,7 +180,7 @@ function OrderOverview(props) {
       <Typography className={classes.typography} variant="h4">
         Order overview
       </Typography>
-      { store && users ? (
+      {store && users ? (
         <React.Fragment>
           <Button
             className={classes.typography}
@@ -184,18 +189,34 @@ function OrderOverview(props) {
             onClick={() => setOpenDialog(true)}>
             Total requests: {Object.keys(requests).length}
           </Button>
-          { requests &&
+          {requests && (
             <DialogRequests
               className={classes.dialog}
               classes={classes}
               open={openDialog}
               onClose={() => setOpenDialog(false)}
               users={users}
-              requestsUsers={Object.keys(requests)} />
-          }
-          <FoodTable title='Food' data={dishRows} users={users} classes={classes} />
-          <FoodTable title='Drink' data={drinkRows} users={users} classes={classes} />
-          <FoodTable title='Dessert' data={dessertRows} users={users} classes={classes} />
+              requestsUsers={Object.keys(requests)}
+            />
+          )}
+          <FoodTable
+            title="Food"
+            data={dishRows}
+            users={users}
+            classes={classes}
+          />
+          <FoodTable
+            title="Drink"
+            data={drinkRows}
+            users={users}
+            classes={classes}
+          />
+          <FoodTable
+            title="Dessert"
+            data={dessertRows}
+            users={users}
+            classes={classes}
+          />
           <Button
             type="button"
             fullWidth
@@ -206,8 +227,9 @@ function OrderOverview(props) {
             Submit order
           </Button>
         </React.Fragment>
-        ) : (<CircularProgress />)
-      }
+      ) : (
+        <CircularProgress />
+      )}
 
       <Button
         type="button"
@@ -226,21 +248,23 @@ function OrderOverview(props) {
     e.preventDefault();
 
     function data(rows) {
-      return Object.keys(rows).map(key => {
-        return `${rows[key].total} ${rows[key].name}`;
-      }).join('\n');
+      return Object.keys(rows)
+        .map(key => {
+          return `${rows[key].total} ${rows[key].name}`;
+        })
+        .join('\n');
     }
 
-    let msg = "Hola, cómo estás?\nEl pedido de hoy es:\n\n";
-    msg += "Comida:\n";
+    let msg = 'Hola, cómo estás?\nEl pedido de hoy es:\n\n';
+    msg += 'Comida:\n';
     msg += data(dishRows);
-    msg += "\n\nBebida:\n";
+    msg += '\n\nBebida:\n';
     msg += data(drinkRows);
-    msg += "\n\nPostres:\n";
+    msg += '\n\nPostres:\n';
     msg += data(dessertRows);
-    msg += "\n\nEnvialo ni bien lo tengas listo. Gracias!";
+    msg += '\n\nEnvialo ni bien lo tengas listo. Gracias!';
 
-    let url = "https://web.whatsapp.com/send?";
+    let url = 'https://web.whatsapp.com/send?';
     url += `phone=${BE_GREEN_PHONE}`;
     url += `&text=${encodeURI(msg)}`;
 

@@ -21,7 +21,7 @@ class Firebase {
   isInitialized() {
     return new Promise(resolve => {
       this.auth.onAuthStateChanged(resolve);
-    })
+    });
   }
 
   getCurrentUser() {
@@ -40,10 +40,16 @@ class Firebase {
       return { error: 'Please login with your @bonzzu account.' };
     }
 
-    await this.db.collection(USER_COLLECTION).doc(user.uid).set({
-      userId: user.uid,
-      displayName: user.displayName,
-    }, { merge: true });
+    await this.db
+      .collection(USER_COLLECTION)
+      .doc(user.uid)
+      .set(
+        {
+          userId: user.uid,
+          displayName: user.displayName,
+        },
+        { merge: true }
+      );
 
     return { user };
   }
@@ -53,12 +59,15 @@ class Firebase {
   }
 
   retrieveAllUsers(callback) {
-    this.db.collection(USER_COLLECTION).get().then(result => {
-      const docs = result.docs.map(doc => doc.data());
-      const users = {}
-      docs.forEach(user => users[user.userId] = user);
-      callback(users);
-    });
+    this.db
+      .collection(USER_COLLECTION)
+      .get()
+      .then(result => {
+        const docs = result.docs.map(doc => doc.data());
+        const users = {};
+        docs.forEach(user => (users[user.userId] = user));
+        callback(users);
+      });
   }
 
   async createNewOrder(menu) {
@@ -68,25 +77,35 @@ class Firebase {
 
     const uid = uniqid();
     const requests = {};
-    await this.db.collection(MENU_COLLECTION).doc(uid).set({
-      menu,
-      requests,
-    });
+    await this.db
+      .collection(MENU_COLLECTION)
+      .doc(uid)
+      .set({
+        menu,
+        requests,
+      });
 
     return uid;
   }
 
   getStore(menuId, callback) {
-    this.db.collection(MENU_COLLECTION).doc(menuId).get().then(result => {
+    this.db
+      .collection(MENU_COLLECTION)
+      .doc(menuId)
+      .get()
+      .then(result => {
         callback(result.data());
-    });
+      });
   }
 
   subscribeToSnapshot(menuId, callback) {
     /* it returns the unsubscribe function */
-    return this.db.collection(MENU_COLLECTION).doc(menuId).onSnapshot(snapshot => {
-      callback(snapshot.data());
-    });
+    return this.db
+      .collection(MENU_COLLECTION)
+      .doc(menuId)
+      .onSnapshot(snapshot => {
+        callback(snapshot.data());
+      });
   }
 
   submitRequest(menuId, request) {
@@ -96,11 +115,17 @@ class Firebase {
 
     const userId = this.getCurrentUser().uid;
 
-    return this.db.collection(MENU_COLLECTION).doc(menuId).set({
-      requests: {
-        [userId]: request,
-      },
-    }, { merge: true });
+    return this.db
+      .collection(MENU_COLLECTION)
+      .doc(menuId)
+      .set(
+        {
+          requests: {
+            [userId]: request,
+          },
+        },
+        { merge: true }
+      );
   }
 }
 

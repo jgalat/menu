@@ -7,7 +7,12 @@ import Request from '../Request';
 import OrderOverview from '../OrderOverview';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { CssBaseline, CircularProgress } from '@material-ui/core';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from 'react-router-dom';
 import firebase from '../firebase';
 
 const theme = createMuiTheme({
@@ -16,12 +21,12 @@ const theme = createMuiTheme({
   },
 });
 
-function App(props) {
+function App() {
   const [firebaseInitialized, setFirebaseInitialized] = useState(false);
 
   useEffect(() => {
     firebase.isInitialized().then(setFirebaseInitialized);
-  });
+  }, []);
 
   return firebaseInitialized !== false ? (
     <MuiThemeProvider theme={theme}>
@@ -38,7 +43,11 @@ function App(props) {
         </Router>
       </PaperLayout>
     </MuiThemeProvider>
-  ) : (<div id="loader"><CircularProgress /></div>);
+  ) : (
+    <div id="loader">
+      <CircularProgress />
+    </div>
+  );
 }
 
 export default App;

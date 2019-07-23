@@ -6,7 +6,8 @@ import {
   InputLabel,
   Select,
   Input,
-  CircularProgress } from '@material-ui/core'
+  CircularProgress,
+} from '@material-ui/core';
 import Fastfood from '@material-ui/icons/Fastfood';
 import { Link } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -33,7 +34,7 @@ function Request(props) {
     firebase.getStore(menuId, storeData => {
       if (!storeData) {
         props.history.replace('/');
-        return null;
+        return;
       }
       setStore(storeData);
       if (storeData.requests[user.uid]) {
@@ -44,7 +45,7 @@ function Request(props) {
         setEnableOverview(true);
       }
     });
-  }, []);
+  }, [menuId, user.uid]);
 
   function handleChange(e) {
     setMenu({
@@ -61,7 +62,7 @@ function Request(props) {
       <Typography className={classes.typography} variant="h4">
         Submit request
       </Typography>
-      { store ? (
+      {store ? (
         <form className={classes.form} onSubmit={submit}>
           <FormControl margin="normal" required fullWidth>
             <InputLabel htmlFor="dish">Plato</InputLabel>
@@ -71,58 +72,73 @@ function Request(props) {
               value={menu.dish}
               onChange={handleChange}
               inputProps={{
-                id: "dish",
-                name: "dish",
+                id: 'dish',
+                name: 'dish',
                 required: true,
               }}>
               <option value="" />
-              { Object.keys(dishes).map((key, i) => {
-                  return (<option value={key} key={i}>{dishes[key]}</option>);
-                })
-              }
+              {Object.keys(dishes).map((key, i) => {
+                return (
+                  <option value={key} key={i}>
+                    {dishes[key]}
+                  </option>
+                );
+              })}
             </Select>
           </FormControl>
           <FormControl margin="normal" fullWidth>
             <InputLabel htmlFor="clarification">Aclaración</InputLabel>
-            <Input id="clarification" name="clarification" autoComplete="off" value={menu.clarification} onChange={handleChange} />
+            <Input
+              id="clarification"
+              name="clarification"
+              autoComplete="off"
+              value={menu.clarification}
+              onChange={handleChange}
+            />
           </FormControl>
           <FormControl margin="normal" required fullWidth>
             <InputLabel htmlFor="drink">Bebida</InputLabel>
-              <Select
-                native
-                className={classes.select}
-                value={menu.drink}
-                onChange={handleChange}
-                inputProps={{
-                  id: "drink",
-                  name: "drink",
-                  required: true,
-                }}>
-                <option value="" />
-                { Object.keys(DRINKS).map((key, i) => {
-                    return (<option value={key} key={i}>{DRINKS[key]}</option>);
-                  })
-                }
-              </Select>
+            <Select
+              native
+              className={classes.select}
+              value={menu.drink}
+              onChange={handleChange}
+              inputProps={{
+                id: 'drink',
+                name: 'drink',
+                required: true,
+              }}>
+              <option value="" />
+              {Object.keys(DRINKS).map((key, i) => {
+                return (
+                  <option value={key} key={i}>
+                    {DRINKS[key]}
+                  </option>
+                );
+              })}
+            </Select>
           </FormControl>
           <FormControl margin="normal" required fullWidth>
             <InputLabel htmlFor="dessert">Postre</InputLabel>
-              <Select
-                native
-                className={classes.select}
-                value={menu.dessert}
-                onChange={handleChange}
-                inputProps={{
-                  id: "dessert",
-                  name: "dessert",
-                  required: true,
-                }}>
-                <option value="" />
-                { Object.keys(DESSERTS).map((key, i) => {
-                    return (<option value={key} key={i}>{DESSERTS[key]}</option>);
-                  })
-                }
-              </Select>
+            <Select
+              native
+              className={classes.select}
+              value={menu.dessert}
+              onChange={handleChange}
+              inputProps={{
+                id: 'dessert',
+                name: 'dessert',
+                required: true,
+              }}>
+              <option value="" />
+              {Object.keys(DESSERTS).map((key, i) => {
+                return (
+                  <option value={key} key={i}>
+                    {DESSERTS[key]}
+                  </option>
+                );
+              })}
+            </Select>
           </FormControl>
           <Button
             type="submit"
@@ -133,9 +149,10 @@ function Request(props) {
             Submit
           </Button>
         </form>
-        ) : (<CircularProgress />)
-      }
-      { enableOverview &&
+      ) : (
+        <CircularProgress />
+      )}
+      {enableOverview && (
         <Button
           type="button"
           fullWidth
@@ -145,7 +162,7 @@ function Request(props) {
           onClick={() => props.history.replace(`/${menuId}/overview`)}>
           Order overview
         </Button>
-      }
+      )}
       <Button
         type="button"
         fullWidth

@@ -10,15 +10,14 @@ function PaperLayout(props) {
   return (
     <React.Fragment>
       <main className={classes.main}>
-        <Paper className={classes.paper}>
-          {children}
-        </Paper>
+        <Paper className={classes.paper}>{children}</Paper>
       </main>
       <footer className={classes.footer}>
         <Typography variant="body1">
-          <Link href={'https://github.com/jgalat/menu'} className={classes.link}>
-            <Code className={classes.footerText} fontSize="inherit" />
-            {' '}
+          <Link
+            href={'https://github.com/jgalat/menu'}
+            className={classes.link}>
+            <Code className={classes.footerText} fontSize="inherit" />{' '}
             <span className={classes.footerText}>Source code</span>
           </Link>
         </Typography>

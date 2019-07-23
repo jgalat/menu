@@ -34,7 +34,7 @@ export function DISHES(menu) {
 
   Object.assign(dishes, _DISHES);
   return dishes;
-};
+}
 
 export const DRINKS = {
   AGUA: 'Agua',

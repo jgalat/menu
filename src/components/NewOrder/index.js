@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Typography,
+import {
+  Typography,
   Button,
   FormControl,
   Input,
   InputLabel,
-   Snackbar } from '@material-ui/core';
+  Snackbar,
+} from '@material-ui/core';
 import Fastfood from '@material-ui/icons/Fastfood';
 import { Link } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -27,7 +29,7 @@ function NewOrder(props) {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
-    })
+    });
   }
 
   return (
@@ -39,19 +41,43 @@ function NewOrder(props) {
       <form className={classes.form} onSubmit={submit}>
         <FormControl margin="normal" required fullWidth>
           <InputLabel htmlFor="dayMenu">Menú del día</InputLabel>
-          <Input id="dayMenu" name="dayMenu" autoComplete="off" value={form.dayMenu} onChange={handleChange} />
+          <Input
+            id="dayMenu"
+            name="dayMenu"
+            autoComplete="off"
+            value={form.dayMenu}
+            onChange={handleChange}
+          />
         </FormControl>
         <FormControl margin="normal" fullWidth>
           <InputLabel htmlFor="pie1">Tarta del día 1</InputLabel>
-          <Input id="pie1" name="pie1" autoComplete="off" value={form.pie1} onChange={handleChange} />
+          <Input
+            id="pie1"
+            name="pie1"
+            autoComplete="off"
+            value={form.pie1}
+            onChange={handleChange}
+          />
         </FormControl>
         <FormControl margin="normal" fullWidth>
           <InputLabel htmlFor="pie2">Tarta del día 2</InputLabel>
-          <Input id="pie2" name="pie2" autoComplete="off" value={form.pie2} onChange={handleChange} />
+          <Input
+            id="pie2"
+            name="pie2"
+            autoComplete="off"
+            value={form.pie2}
+            onChange={handleChange}
+          />
         </FormControl>
         <FormControl margin="normal" fullWidth>
           <InputLabel htmlFor="pie3">Tarta del día 3</InputLabel>
-          <Input id="pie3" name="pie3" autoComplete="off" value={form.pie3} onChange={handleChange} />
+          <Input
+            id="pie3"
+            name="pie3"
+            autoComplete="off"
+            value={form.pie3}
+            onChange={handleChange}
+          />
         </FormControl>
         <Button
           type="submit"
@@ -72,7 +98,7 @@ function NewOrder(props) {
         to="/">
         Go back
       </Button>
-      { orderLink &&
+      {orderLink && (
         <Snackbar
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           className={classes.snackbar}
@@ -81,7 +107,8 @@ function NewOrder(props) {
           }}
           message={
             <Typography color="inherit">
-              Share this link: <em>{`${window.location.origin}/${orderLink}`}</em>
+              Share this link:{' '}
+              <em>{`${window.location.origin}/${orderLink}`}</em>
             </Typography>
           }
           open={orderLink ? true : false}
@@ -90,12 +117,16 @@ function NewOrder(props) {
               <Button color="secondary" size="small" onClick={copyUrl}>
                 Copy
               </Button>
-              <Button color="secondary" size="small" onClick={() => props.history.replace(orderLink)}>
+              <Button
+                color="secondary"
+                size="small"
+                onClick={() => props.history.replace(orderLink)}>
                 Redirect me
               </Button>
             </React.Fragment>
-          }/>
-      }
+          }
+        />
+      )}
     </React.Fragment>
   );
 
@@ -110,7 +141,7 @@ function NewOrder(props) {
 
     try {
       document.execCommand('copy');
-    } catch (err) { }
+    } catch (err) {}
 
     document.body.removeChild(textArea);
   }
@@ -122,7 +153,7 @@ function NewOrder(props) {
 
     if (!uid) {
       props.history.replace('/');
-      return null;
+      return;
     }
 
     setOrderLink(uid);
