@@ -19,10 +19,12 @@ function NewOrder(props) {
 
   const [orderLink, setOrderLink] = useState('');
   const [form, setForm] = useState({
-    dayMenu: '',
-    pie1: '',
-    pie2: '',
-    pie3: '',
+    menu1: '',
+    menu2: '',
+    menu3: '',
+    daySalad: '',
+    dayPie: '',
+    dayVeggie: ''
   });
 
   function handleChange(e) {
@@ -40,42 +42,62 @@ function NewOrder(props) {
       </Typography>
       <form className={classes.form} onSubmit={submit}>
         <FormControl margin="normal" required fullWidth>
-          <InputLabel htmlFor="dayMenu">Menú del día</InputLabel>
+          <InputLabel htmlFor="menu1">Menu 1</InputLabel>
           <Input
-            id="dayMenu"
-            name="dayMenu"
+            id="menu1"
+            name="menu1"
             autoComplete="off"
-            value={form.dayMenu}
+            value={form.menu1}
             onChange={handleChange}
           />
         </FormControl>
         <FormControl margin="normal" fullWidth>
-          <InputLabel htmlFor="pie1">Tarta del día 1</InputLabel>
+          <InputLabel htmlFor="menu2">Menu 2</InputLabel>
           <Input
-            id="pie1"
-            name="pie1"
+            id="menu2"
+            name="menu2"
             autoComplete="off"
-            value={form.pie1}
+            value={form.menu2}
             onChange={handleChange}
           />
         </FormControl>
         <FormControl margin="normal" fullWidth>
-          <InputLabel htmlFor="pie2">Tarta del día 2</InputLabel>
+          <InputLabel htmlFor="menu3">Menu 3</InputLabel>
           <Input
-            id="pie2"
-            name="pie2"
+            id="menu3"
+            name="menu3"
             autoComplete="off"
-            value={form.pie2}
+            value={form.menu3}
             onChange={handleChange}
           />
         </FormControl>
         <FormControl margin="normal" fullWidth>
-          <InputLabel htmlFor="pie3">Tarta del día 3</InputLabel>
+          <InputLabel htmlFor="daySalad">Ensalada del día</InputLabel>
           <Input
-            id="pie3"
-            name="pie3"
+            id="daySalad"
+            name="daySalad"
             autoComplete="off"
-            value={form.pie3}
+            value={form.daySalad}
+            onChange={handleChange}
+          />
+        </FormControl>
+        <FormControl margin="normal" fullWidth>
+          <InputLabel htmlFor="dayPie">Tarta del día</InputLabel>
+          <Input
+            id="dayPie"
+            name="dayPie"
+            autoComplete="off"
+            value={form.dayPie}
+            onChange={handleChange}
+          />
+        </FormControl>
+        <FormControl margin="normal" fullWidth>
+          <InputLabel htmlFor="dayVeggie">Vegetariano del día</InputLabel>
+          <Input
+            id="dayVeggie"
+            name="dayVeggie"
+            autoComplete="off"
+            value={form.dayVeggie}
             onChange={handleChange}
           />
         </FormControl>
