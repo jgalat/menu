@@ -23,7 +23,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import firebase from '../firebase';
 import style from '../theme';
 import withAuthentication from '../withAuthentication';
-import { DISHES, DRINKS, DESSERTS, BE_GREEN_PHONE } from '../constants';
+import { DISHES, DRINKS, DESSERTS } from '../constants';
 
 function DialogRequests(props) {
   const { requestsUsers, users, classes, ...rest } = props;
@@ -256,19 +256,10 @@ function OrderOverview(props) {
     }
 
     let msg = 'Hola, cómo estás?\nEl pedido de hoy es:\n\n';
-    msg += 'Comida:\n';
     msg += data(dishRows);
-    msg += '\n\nBebida:\n';
-    msg += data(drinkRows);
-    msg += '\n\nPostres:\n';
-    msg += data(dessertRows);
     msg += '\n\nEnvialo ni bien lo tengas listo. Gracias!';
 
-    let url = 'https://web.whatsapp.com/send?';
-    url += `phone=${BE_GREEN_PHONE}`;
-    url += `&text=${encodeURI(msg)}`;
-
-    window.open(url, '_blank');
+    alert(msg);
   }
 }
 
